@@ -1,0 +1,11 @@
+GRID!!
+<div class="grid-container">
+<button {{action "toggle" "grid" on="mouseUp"}}> ✓ </button>
+{{hoppr-grid height="400px" width="500px"}}	
+
+{{#if collapsed}}
+	Collapsed
+{{else}}
+	Expanded
+{{/if}}
+</div>

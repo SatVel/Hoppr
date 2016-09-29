@@ -1,0 +1,10 @@
+STATS!!
+<div class="stats-container">
+    <button {{action "toggle" "stats" on="mouseUp"}}> ✓ </button>
+    {{#if collapsed}}
+        <div id="chartcontainer"></div>
+        {{fusion-chart data=myData config=config}}
+    {{else}}
+        Expanded
+    {{/if}}
+</div>

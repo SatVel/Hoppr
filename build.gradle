@@ -1,0 +1,90 @@
+buildscript {
+    dependencies {
+        classpath('com.moowork.gradle:gradle-node-plugin:0.13')
+        classpath('com.kiefer.gradle:ember-cli-gradle-plugin:3.0.0')
+    }
+}
+
+idea {
+    module {
+        excludeDirs += file('tmp')
+        excludeDirs += file('node_modules')
+        excludeDirs += file('bower_components')
+    }
+}
+
+// tasks.remove(test)
+apply plugin: 'com.moowork.node'
+node {
+    version = '4.5.0'
+    npmVersion = '3.10.8'
+    distBaseUrl = 'https://nodejs.org/dist'
+    download = true
+    workDir = file("${project.buildDir}/nodejs")
+    nodeModulesDir = file("${project.projectDir}/node_modules")
+}
+
+def nodesNpmTask
+project.afterEvaluate {
+    nodesNpmTask = tasks.getByName('npmInstall')
+    tasks.remove(npmInstall)
+}
+
+apply plugin: 'com.kiefer.gradle.embercli'
+project.afterEvaluate {
+    tasks.remove(npmInstall)
+    tasks.add(nodesNpmTask)
+    npmInstall.dependsOn {npmSetup}
+
+    project.ext.currentPath = {environment ->
+        (null == environment['PATH'] ? '' : environment['PATH']) + File.pathSeparator + (null == environment['Path'] ? '' : environment['Path'])
+    }
+
+    project.ext.addNpmPath = {
+        FileTree npmInstallation
+        def collection = files {npmInstallation.getFiles()}
+        npmInstallation = fileTree(dir: "${node.nodeModulesDir}", include: '**/.bin/npm')
+
+        collection.collect { it.getParent() }.first()
+    }
+
+    project.ext.addNodePath = {
+        FileTree nodeInstallation
+        def collection = files {nodeInstallation.getFiles()}
+        nodeInstallation = fileTree(dir: "${node.workDir}", include: '**/bin/node*')
+
+        collection.collect { it.getParent() }.sort().unique().join(File.pathSeparator)
+    }
+
+    project.ext.finalPath = {environment ->
+        "${addNpmPath()}${File.pathSeparator}${addNodePath()}${File.pathSeparator}${currentPath(environment)}"
+    }
+
+    npmInstall.doFirst {
+        def _env = [:]
+            _env << System.getenv()
+            _env['PATH'] = finalPath(_env)
+            _env.remove('Path')
+        environment _env
+    }
+
+    bowerInstall.doFirst {
+        environment 'PATH', finalPath(environment)
+        environment.remove('Path')
+    }
+
+    bowerUpdate.doFirst {
+        environment 'PATH', finalPath(environment)
+        environment.remove('Path')
+    }
+
+    test.doFirst {
+        environment 'PATH', finalPath(environment)
+        environment.remove('Path')
+    }
+
+    emberBuild.doFirst {
+        environment 'PATH', finalPath(environment)
+        environment.remove('Path')
+    }
+}

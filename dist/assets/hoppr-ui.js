@@ -8,19 +8,19 @@
 
 define('hoppr-ui/app', ['exports', 'ember', 'hoppr-ui/resolver', 'ember-load-initializers', 'hoppr-ui/config/environment'], function (exports, _ember, _hopprUiResolver, _emberLoadInitializers, _hopprUiConfigEnvironment) {
 
-  var App = undefined;
+    var App = undefined;
 
-  _ember['default'].MODEL_FACTORY_INJECTIONS = true;
+    _ember['default'].MODEL_FACTORY_INJECTIONS = true;
 
-  App = _ember['default'].Application.extend({
-    modulePrefix: _hopprUiConfigEnvironment['default'].modulePrefix,
-    podModulePrefix: _hopprUiConfigEnvironment['default'].podModulePrefix,
-    Resolver: _hopprUiResolver['default']
-  });
+    App = _ember['default'].Application.extend({
+        modulePrefix: _hopprUiConfigEnvironment['default'].modulePrefix,
+        podModulePrefix: _hopprUiConfigEnvironment['default'].podModulePrefix,
+        Resolver: _hopprUiResolver['default']
+    });
 
-  (0, _emberLoadInitializers['default'])(App, _hopprUiConfigEnvironment['default'].modulePrefix);
+    (0, _emberLoadInitializers['default'])(App, _hopprUiConfigEnvironment['default'].modulePrefix);
 
-  exports['default'] = App;
+    exports['default'] = App;
 });
 define('hoppr-ui/components/app-version', ['exports', 'ember-cli-app-version/components/app-version', 'hoppr-ui/config/environment'], function (exports, _emberCliAppVersionComponentsAppVersion, _hopprUiConfigEnvironment) {
 
@@ -286,6 +286,60 @@ define('hoppr-ui/components/ember-wormhole', ['exports', 'ember-wormhole/compone
     }
   });
 });
+define('hoppr-ui/components/fusion-chart', ['exports', 'ember'], function (exports, _ember) {
+    exports['default'] = _ember['default'].Component.extend({
+        init: function init() {
+            this._super.apply(this, arguments);
+            charttype: '';
+            renderat: '';
+            myData: '';
+        },
+
+        didInsertElement: function didInsertElement() {
+            var appData = this.get('data');
+            var myData = appData.data;
+            var configData = this.get('config');
+            var height = configData.height;
+            var width = configData.width;
+            var chartType = configData.charttype;
+            var divName = configData.renderat;
+            var paletteColors = configData.paletteColors;
+
+            FusionCharts.ready(function () {
+                var fusioncharts = new FusionCharts({
+                    type: chartType,
+                    renderAt: divName,
+                    width: width,
+                    height: height,
+                    dataFormat: 'json',
+                    dataSource: {
+                        chart: {
+                            paletteColors: paletteColors,
+                            bgColor: "#ffffff",
+                            showBorder: "0",
+                            use3DLighting: "0",
+                            enableSmartLabels: "1",
+                            startingAngle: "310",
+                            showLabels: "1",
+                            showPercentValues: "0",
+                            showLegend: "1",
+                            defaultCenterLabel: "64.08K",
+                            centerLabel: "Revenue from $label",
+                            centerLabelBold: "1",
+                            showTooltip: "1",
+                            decimals: "0",
+                            useDataPlotColorForLabels: "1",
+                            enableMultiSlicing: "1"
+                        },
+                        "data": myData
+                    }
+                });
+
+                fusioncharts.render();
+            });
+        }
+    });
+});
 define('hoppr-ui/components/hoppr-grid', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Component.extend({
 
@@ -294,7 +348,6 @@ define('hoppr-ui/components/hoppr-grid', ['exports', 'ember'], function (exports
       this._super.apply(this, arguments);
       var height = this.attrs.height;
       var width = this.attrs.width;
-      var showColumnsDropdown = this.attrs.showColumnsDropdown;
     }
 
   });
@@ -493,18 +546,18 @@ define('hoppr-ui/initializers/export-application-global', ['exports', 'ember', '
   };
 });
 define('hoppr-ui/initializers/i18n', ['exports'], function (exports) {
-  exports['default'] = {
-    name: 'i18n',
+    exports['default'] = {
+        name: 'i18n',
 
-    after: 'ember-i18n',
+        after: 'ember-i18n',
 
-    initialize: function initialize(app) {
-      app.inject('route', 'i18n', 'service:i18n');
-      app.inject('controller', 'i18n', 'service:i18n');
-      app.inject('mixin', 'i18n', 'service:i18n');
-      app.inject('model', 'i18n', 'service:i18n');
-    }
-  };
+        initialize: function initialize(app) {
+            app.inject('route', 'i18n', 'service:i18n');
+            app.inject('controller', 'i18n', 'service:i18n');
+            app.inject('mixin', 'i18n', 'service:i18n');
+            app.inject('model', 'i18n', 'service:i18n');
+        }
+    };
 });
 define('hoppr-ui/initializers/injectStore', ['exports', 'ember'], function (exports, _ember) {
 
@@ -576,34 +629,347 @@ define('hoppr-ui/instance-initializers/ember-i18n', ['exports', 'ember-i18n/inst
   exports['default'] = _emberI18nInstanceInitializersEmberI18n['default'];
 });
 define("hoppr-ui/locales/en/config", ["exports"], function (exports) {
-  // Ember-I18n includes configuration for common locales. Most users
-  // can safely delete this file. Use it if you need to override behavior
-  // for a locale or define behavior for a locale that Ember-I18n
-  // doesn't know about.
-  exports["default"] = {
-    // rtl: [true|FALSE],
-    //
-    // pluralForm: function(count) {
-    //   if (count === 0) { return 'zero'; }
-    //   if (count === 1) { return 'one'; }
-    //   if (count === 2) { return 'two'; }
-    //   if (count < 5) { return 'few'; }
-    //   if (count >= 5) { return 'many'; }
-    //   return 'other';
-    // }
-  };
+    // Ember-I18n includes configuration for common locales. Most users
+    // can safely delete this file. Use it if you need to override behavior
+    // for a locale or define behavior for a locale that Ember-I18n
+    // doesn't know about.
+    exports["default"] = {
+        // rtl: [true|FALSE],
+        //
+        // pluralForm: function(count) {
+        //   if (count === 0) { return 'zero'; }
+        //   if (count === 1) { return 'one'; }
+        //   if (count === 2) { return 'two'; }
+        //   if (count < 5) { return 'few'; }
+        //   if (count >= 5) { return 'many'; }
+        //   return 'other';
+        // }
+    };
 });
 define("hoppr-ui/locales/en/translations", ["exports"], function (exports) {
-  exports["default"] = {
-    "dashboard": {
-      "tabs": {
-        "summaryView": "Summary View",
-        "RoomsData": "Rooms Data",
-        "F&BData": "F&B Data",
-        "OtherIncome": "Other Income"
-      }
-    }
-  };
+    exports["default"] = {
+        "dashboard": {
+            "tabs": {
+                "summaryView": "Summary View",
+                "RoomsData": "Rooms Data",
+                "F&BData": "F&B Data",
+                "OtherIncome": "Other Income"
+            }
+        }
+    };
+});
+define('hoppr-ui/pod/components/dashboard/dailyrevenue/grid-container/component', ['exports', 'ember'], function (exports, _ember) {
+    exports['default'] = _ember['default'].Component.extend({
+        toggle: 'toggle',
+        actions: {
+            toggle: function toggle(what) {
+                this.sendAction('toggle', what);
+            }
+        }
+    });
+});
+define("hoppr-ui/pod/components/dashboard/dailyrevenue/grid-container/template", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template((function () {
+    var child0 = (function () {
+      return {
+        meta: {
+          "revision": "Ember@2.8.1",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 6,
+              "column": 0
+            },
+            "end": {
+              "line": 8,
+              "column": 0
+            }
+          },
+          "moduleName": "hoppr-ui/pod/components/dashboard/dailyrevenue/grid-container/template.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("	Collapsed\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes() {
+          return [];
+        },
+        statements: [],
+        locals: [],
+        templates: []
+      };
+    })();
+    var child1 = (function () {
+      return {
+        meta: {
+          "revision": "Ember@2.8.1",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 8,
+              "column": 0
+            },
+            "end": {
+              "line": 10,
+              "column": 0
+            }
+          },
+          "moduleName": "hoppr-ui/pod/components/dashboard/dailyrevenue/grid-container/template.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("	Expanded\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes() {
+          return [];
+        },
+        statements: [],
+        locals: [],
+        templates: []
+      };
+    })();
+    return {
+      meta: {
+        "revision": "Ember@2.8.1",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 11,
+            "column": 6
+          }
+        },
+        "moduleName": "hoppr-ui/pod/components/dashboard/dailyrevenue/grid-container/template.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createTextNode("GRID!!\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("div");
+        dom.setAttribute(el1, "class", "grid-container");
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("button");
+        var el3 = dom.createTextNode(" ✓ ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("	\n\n");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var element0 = dom.childAt(fragment, [1]);
+        var element1 = dom.childAt(element0, [1]);
+        var morphs = new Array(3);
+        morphs[0] = dom.createElementMorph(element1);
+        morphs[1] = dom.createMorphAt(element0, 3, 3);
+        morphs[2] = dom.createMorphAt(element0, 5, 5);
+        return morphs;
+      },
+      statements: [["element", "action", ["toggle", "grid"], ["on", "mouseUp"], ["loc", [null, [3, 8], [3, 47]]], 0, 0], ["inline", "hoppr-grid", [], ["height", "400px", "width", "500px"], ["loc", [null, [4, 0], [4, 43]]], 0, 0], ["block", "if", [["get", "collapsed", ["loc", [null, [6, 6], [6, 15]]], 0, 0, 0, 0]], [], 0, 1, ["loc", [null, [6, 0], [10, 7]]]]],
+      locals: [],
+      templates: [child0, child1]
+    };
+  })());
+});
+define('hoppr-ui/pod/components/dashboard/dailyrevenue/stats-container/component', ['exports', 'ember', 'hoppr-ui/types/chartoptions', 'hoppr-ui/types/chartdata'], function (exports, _ember, _hopprUiTypesChartoptions, _hopprUiTypesChartdata) {
+    exports['default'] = _ember['default'].Component.extend({
+        init: function init() {
+            this._super.apply(this, arguments);
+        },
+
+        toggle: 'toggle',
+
+        config: _hopprUiTypesChartoptions['default'].create({
+            height: '500',
+            width: '500',
+            charttype: "doughnut2d",
+            renderat: "chartcontainer",
+            paletteColors: "FF5904,0372AB,FF0000"
+        }),
+
+        myData: _hopprUiTypesChartdata['default'].create({
+            data: [{
+                "label": "Group",
+                "value": "880000"
+            }, {
+                "label": "Transient",
+                "value": "730000"
+            }, {
+                "label": "others",
+                "value": "590000"
+            }]
+        }),
+
+        actions: {
+            toggle: function toggle(what) {
+                console.log(what);
+                this.sendAction('toggle', what);
+            }
+        }
+    });
+});
+define("hoppr-ui/pod/components/dashboard/dailyrevenue/stats-container/template", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template((function () {
+    var child0 = (function () {
+      return {
+        meta: {
+          "revision": "Ember@2.8.1",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 4,
+              "column": 4
+            },
+            "end": {
+              "line": 7,
+              "column": 4
+            }
+          },
+          "moduleName": "hoppr-ui/pod/components/dashboard/dailyrevenue/stats-container/template.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("        ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1, "id", "chartcontainer");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n        ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment("");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment, 3, 3, contextualElement);
+          return morphs;
+        },
+        statements: [["inline", "fusion-chart", [], ["data", ["subexpr", "@mut", [["get", "myData", ["loc", [null, [6, 28], [6, 34]]], 0, 0, 0, 0]], [], [], 0, 0], "config", ["subexpr", "@mut", [["get", "config", ["loc", [null, [6, 42], [6, 48]]], 0, 0, 0, 0]], [], [], 0, 0]], ["loc", [null, [6, 8], [6, 50]]], 0, 0]],
+        locals: [],
+        templates: []
+      };
+    })();
+    var child1 = (function () {
+      return {
+        meta: {
+          "revision": "Ember@2.8.1",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 7,
+              "column": 4
+            },
+            "end": {
+              "line": 9,
+              "column": 4
+            }
+          },
+          "moduleName": "hoppr-ui/pod/components/dashboard/dailyrevenue/stats-container/template.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("        Expanded\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes() {
+          return [];
+        },
+        statements: [],
+        locals: [],
+        templates: []
+      };
+    })();
+    return {
+      meta: {
+        "revision": "Ember@2.8.1",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 10,
+            "column": 6
+          }
+        },
+        "moduleName": "hoppr-ui/pod/components/dashboard/dailyrevenue/stats-container/template.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createTextNode("STATS!!\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("div");
+        dom.setAttribute(el1, "class", "stats-container");
+        var el2 = dom.createTextNode("\n    ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("button");
+        var el3 = dom.createTextNode(" ✓ ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var element0 = dom.childAt(fragment, [1]);
+        var element1 = dom.childAt(element0, [1]);
+        var morphs = new Array(2);
+        morphs[0] = dom.createElementMorph(element1);
+        morphs[1] = dom.createMorphAt(element0, 3, 3);
+        return morphs;
+      },
+      statements: [["element", "action", ["toggle", "stats"], ["on", "mouseUp"], ["loc", [null, [3, 12], [3, 52]]], 0, 0], ["block", "if", [["get", "collapsed", ["loc", [null, [4, 10], [4, 19]]], 0, 0, 0, 0]], [], 0, 1, ["loc", [null, [4, 4], [9, 11]]]]],
+      locals: [],
+      templates: [child0, child1]
+    };
+  })());
 });
 define('hoppr-ui/pod/components/dashboard/dailyrevenue/tab-list/component', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Component.extend({});
@@ -841,7 +1207,13 @@ define("hoppr-ui/pod/components/dashboard/dailyrevenue/tab-list/template", ["exp
         var el2 = dom.createTextNode("\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n");
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("br");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("br");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createComment("");
         dom.appendChild(el0, el1);
@@ -856,7 +1228,7 @@ define("hoppr-ui/pod/components/dashboard/dailyrevenue/tab-list/template", ["exp
         morphs[1] = dom.createMorphAt(dom.childAt(element0, [3]), 0, 0);
         morphs[2] = dom.createMorphAt(dom.childAt(element0, [5]), 0, 0);
         morphs[3] = dom.createMorphAt(dom.childAt(element0, [7]), 0, 0);
-        morphs[4] = dom.createMorphAt(fragment, 2, 2, contextualElement);
+        morphs[4] = dom.createMorphAt(fragment, 5, 5, contextualElement);
         return morphs;
       },
       statements: [["block", "link-to", ["dashboard.dailyrevenue.rooms"], [], 0, null, ["loc", [null, [2, 23], [2, 147]]]], ["block", "link-to", ["dashboard.dailyrevenue.rooms"], [], 1, null, ["loc", [null, [3, 23], [3, 145]]]], ["block", "link-to", ["dashboard.dailyrevenue.rooms"], [], 2, null, ["loc", [null, [4, 23], [4, 143]]]], ["block", "link-to", ["dashboard.dailyrevenue.rooms"], [], 3, null, ["loc", [null, [5, 23], [5, 147]]]], ["content", "yield", ["loc", [null, [8, 0], [8, 9]]], 0, 0, 0, 0]],
@@ -961,7 +1333,20 @@ define("hoppr-ui/pod/components/ember-hoppr-grid/template", ["exports"], functio
   })());
 });
 define('hoppr-ui/pod/dashboard/dailyrevenue/rooms/route', ['exports', 'ember'], function (exports, _ember) {
-  exports['default'] = _ember['default'].Route.extend({});
+    exports['default'] = _ember['default'].Route.extend({
+        setupController: function setupController(controller, model) {
+            this._super(controller, model);
+            controller.set('prefs', {
+                toggle: { stats: false, grid: true }
+            });
+        },
+        actions: {
+            toggle: function toggle(what) {
+                this.controller.set('prefs.toggle.' + what, !this.controller.get('prefs.toggle.' + what));
+            }
+        }
+
+    });
 });
 define("hoppr-ui/pod/dashboard/dailyrevenue/rooms/template", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template((function () {
@@ -975,7 +1360,7 @@ define("hoppr-ui/pod/dashboard/dailyrevenue/rooms/template", ["exports"], functi
             "column": 0
           },
           "end": {
-            "line": 6,
+            "line": 5,
             "column": 0
           }
         },
@@ -991,13 +1376,7 @@ define("hoppr-ui/pod/dashboard/dailyrevenue/rooms/template", ["exports"], functi
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n");
         dom.appendChild(el0, el1);
-        var el1 = dom.createElement("br");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createElement("h2");
-        var el2 = dom.createTextNode("rooms");
-        dom.appendChild(el1, el2);
+        var el1 = dom.createComment("");
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n");
         dom.appendChild(el0, el1);
@@ -1012,12 +1391,13 @@ define("hoppr-ui/pod/dashboard/dailyrevenue/rooms/template", ["exports"], functi
         return el0;
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var morphs = new Array(2);
-        morphs[0] = dom.createMorphAt(fragment, 6, 6, contextualElement);
-        morphs[1] = dom.createMorphAt(fragment, 8, 8, contextualElement);
+        var morphs = new Array(3);
+        morphs[0] = dom.createMorphAt(fragment, 2, 2, contextualElement);
+        morphs[1] = dom.createMorphAt(fragment, 4, 4, contextualElement);
+        morphs[2] = dom.createMorphAt(fragment, 6, 6, contextualElement);
         return morphs;
       },
-      statements: [["inline", "hoppr-grid", [], ["height", "500px", "width", "1900px", "showColumnsDropdown", "true"], ["loc", [null, [4, 0], [4, 71]]], 0, 0], ["content", "outlet", ["loc", [null, [5, 0], [5, 10]]], 0, 0, 0, 0]],
+      statements: [["inline", "dashboard.dailyrevenue.stats-container", [], ["collapsed", ["subexpr", "@mut", [["get", "prefs.toggle.stats", ["loc", [null, [2, 51], [2, 69]]], 0, 0, 0, 0]], [], [], 0, 0]], ["loc", [null, [2, 0], [2, 71]]], 0, 0], ["inline", "dashboard.dailyrevenue.grid-container", [], ["collapsed", ["subexpr", "@mut", [["get", "prefs.toggle.grid", ["loc", [null, [3, 50], [3, 67]]], 0, 0, 0, 0]], [], [], 0, 0]], ["loc", [null, [3, 0], [3, 69]]], 0, 0], ["content", "outlet", ["loc", [null, [4, 0], [4, 10]]], 0, 0, 0, 0]],
       locals: [],
       templates: []
     };
@@ -1210,22 +1590,22 @@ define('hoppr-ui/resolver', ['exports', 'ember-resolver'], function (exports, _e
 });
 define('hoppr-ui/router', ['exports', 'ember', 'hoppr-ui/config/environment'], function (exports, _ember, _hopprUiConfigEnvironment) {
 
-  var Router = _ember['default'].Router.extend({
-    location: _hopprUiConfigEnvironment['default'].locationType
-  });
-
-  Router.map(function () {
-    this.route('ui', { path: '/' });
-    this.route('dashboard', function () {
-      this.route('index', { path: '/' });
-      this.route('dailyrevenue', function () {
-        this.route('index', { path: '/' });
-        this.route('rooms');
-      });
+    var Router = _ember['default'].Router.extend({
+        location: _hopprUiConfigEnvironment['default'].locationType
     });
-  });
 
-  exports['default'] = Router;
+    Router.map(function () {
+        this.route('ui', { path: '/' });
+        this.route('dashboard', function () {
+            this.route('index', { path: '/' });
+            this.route('dailyrevenue', function () {
+                this.route('index', { path: '/' });
+                this.route('rooms');
+            });
+        });
+    });
+
+    exports['default'] = Router;
 });
 define('hoppr-ui/routes/ui', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Route.extend({});
@@ -5012,49 +5392,8 @@ define("hoppr-ui/templates/components/form-element/vertical/textarea", ["exports
     };
   })());
 });
-define("hoppr-ui/templates/components/hoppr-grid", ["exports"], function (exports) {
+define("hoppr-ui/templates/components/fusion-chart", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template((function () {
-    var child0 = (function () {
-      return {
-        meta: {
-          "revision": "Ember@2.8.1",
-          "loc": {
-            "source": null,
-            "start": {
-              "line": 4,
-              "column": 2
-            },
-            "end": {
-              "line": 6,
-              "column": 2
-            }
-          },
-          "moduleName": "hoppr-ui/templates/components/hoppr-grid.hbs"
-        },
-        isEmpty: false,
-        arity: 0,
-        cachedFragment: null,
-        hasRendered: false,
-        buildFragment: function buildFragment(dom) {
-          var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("    ");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createComment("");
-          dom.appendChild(el0, el1);
-          var el1 = dom.createTextNode("\n");
-          dom.appendChild(el0, el1);
-          return el0;
-        },
-        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var morphs = new Array(1);
-          morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
-          return morphs;
-        },
-        statements: [["inline", "partial", [["get", "columnsDropdownTemplate", ["loc", [null, [5, 14], [5, 37]]], 0, 0, 0, 0]], [], ["loc", [null, [5, 4], [5, 39]]], 0, 0]],
-        locals: [],
-        templates: []
-      };
-    })();
     return {
       meta: {
         "revision": "Ember@2.8.1",
@@ -5065,7 +5404,47 @@ define("hoppr-ui/templates/components/hoppr-grid", ["exports"], function (export
             "column": 0
           },
           "end": {
-            "line": 20,
+            "line": 2,
+            "column": 0
+          }
+        },
+        "moduleName": "hoppr-ui/templates/components/fusion-chart.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("div");
+        dom.setAttribute(el1, "id", "chartcontainer");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes() {
+        return [];
+      },
+      statements: [],
+      locals: [],
+      templates: []
+    };
+  })());
+});
+define("hoppr-ui/templates/components/hoppr-grid", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template((function () {
+    return {
+      meta: {
+        "revision": "Ember@2.8.1",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 17,
             "column": 0
           }
         },
@@ -5082,11 +5461,7 @@ define("hoppr-ui/templates/components/hoppr-grid", ["exports"], function (export
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("div");
         dom.setAttribute(el2, "class", "container");
-        var el3 = dom.createTextNode("\n");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n");
+        var el3 = dom.createTextNode("\n  \n");
         dom.appendChild(el2, el3);
         var el3 = dom.createElement("table");
         dom.setAttribute(el3, "class", "table table-striped");
@@ -5109,15 +5484,14 @@ define("hoppr-ui/templates/components/hoppr-grid", ["exports"], function (export
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var element0 = dom.childAt(fragment, [0]);
-        var morphs = new Array(3);
+        var morphs = new Array(2);
         morphs[0] = dom.createAttrMorph(element0, 'style');
-        morphs[1] = dom.createMorphAt(dom.childAt(element0, [1]), 1, 1);
-        morphs[2] = dom.createMorphAt(fragment, 2, 2, contextualElement);
+        morphs[1] = dom.createMorphAt(fragment, 2, 2, contextualElement);
         return morphs;
       },
-      statements: [["attribute", "style", ["concat", ["display:block;border: 1px solid grey;height:", ["get", "height", ["loc", [null, [1, 58], [1, 64]]], 0, 0, 0, 0], ";width:", ["get", "width", ["loc", [null, [1, 75], [1, 80]]], 0, 0, 0, 0]], 0, 0, 0, 0, 0], 0, 0, 0, 0], ["block", "if", [["get", "showColumnsDropdown", ["loc", [null, [4, 8], [4, 27]]], 0, 0, 0, 0]], [], 0, null, ["loc", [null, [4, 2], [6, 9]]]], ["content", "yield", ["loc", [null, [19, 0], [19, 9]]], 0, 0, 0, 0]],
+      statements: [["attribute", "style", ["concat", ["display:block;border: 1px solid grey;height:", ["get", "height", ["loc", [null, [1, 58], [1, 64]]], 0, 0, 0, 0], ";width:", ["get", "width", ["loc", [null, [1, 75], [1, 80]]], 0, 0, 0, 0]], 0, 0, 0, 0, 0], 0, 0, 0, 0], ["content", "yield", ["loc", [null, [16, 0], [16, 9]]], 0, 0, 0, 0]],
       locals: [],
-      templates: [child0]
+      templates: []
     };
   })());
 });
@@ -5205,6 +5579,51 @@ define("hoppr-ui/templates/ui", ["exports"], function (exports) {
       templates: [child0]
     };
   })());
+});
+define('hoppr-ui/types/chartdata', ['exports', 'ember'], function (exports, _ember) {
+  exports['default'] = _ember['default'].Object.extend({
+    data: []
+  });
+});
+define('hoppr-ui/types/chartoptions', ['exports', 'ember'], function (exports, _ember) {
+  exports['default'] = _ember['default'].Object.extend({
+
+    height: '',
+    width: '',
+    charttype: '',
+    renderat: '',
+    paletteColors: ''
+
+  });
+});
+define('hoppr-ui/utils/grid', ['exports', 'ember'], function (exports, _ember) {
+    exports['default'] = _ember['default'].Object.extend({
+
+        init: function init() {
+
+            var columns = [];
+            var groupedHeaders = [];
+
+            this.getColumns = function () {
+                return columns;
+            };
+
+            this.getGroupedHeaders = function () {
+                return groupedHeaders;
+            };
+
+            this.setColumns = function (val) {
+                columns.push(val);
+            };
+
+            this.setGroupedHeaders = function (val) {
+                groupedHeaders.push(val);
+            };
+
+            this._super.apply(this, arguments);
+        }
+
+    });
 });
 define('hoppr-ui/utils/i18n/compile-template', ['exports', 'ember-i18n/utils/i18n/compile-template'], function (exports, _emberI18nUtilsI18nCompileTemplate) {
   Object.defineProperty(exports, 'default', {

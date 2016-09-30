@@ -4,53 +4,17 @@ export default Ember.Object.extend({
 
 	init:function(){
 
-    var columnsOrder=[];
-    var hiddenColumns=[];  
-    var frozenColumnCount=4;
-    var groupedHeaders={};
-    var editableColumns=[];
-    var columnCaption={};
-    
-    
+    var column=[];
     
 
-      this.getColumnOrder=function(){
-      }
-      this.getHiddenColumns=function(){
-      }
-      this.getFrozenColumnCount=function(){
-      }
-      this.getGroupHeader=function(){
-      }
-      this.getEditableColumns=function(){
-      }
-      this.getColumnCaptions=function(){
-      }
+    this.getColumns=function(){
+      return column;
+    };
 
-    
-    
+    this.setColumns=function(val){
+      column.push(val);
+    };
 
-    
-      
-      this.setColumnOrder=function(val){
-      }
-    
-      this.setHiddenColumns=function(val){
-      }
-    
-      this.setFrozenColumnCount=function(val){
-      }
-   
-      this.setGroupHeader=function(val){
-      }
-  
-     this.setEditableColumns=function(val){
-     }
-  
-    this.setColumnCaptions=function(val){
-    }
-
-  
     this._super(...arguments);
 
 	}

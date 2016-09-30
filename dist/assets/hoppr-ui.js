@@ -340,14 +340,46 @@ define('hoppr-ui/components/fusion-chart', ['exports', 'ember'], function (expor
         }
     });
 });
-define('hoppr-ui/components/hoppr-grid', ['exports', 'ember'], function (exports, _ember) {
-  exports['default'] = _ember['default'].Component.extend({
+define('hoppr-ui/components/hoppr-grid', ['exports', 'ember', 'hoppr-ui/templates/components/hoppr-grid'], function (exports, _ember, _hopprUiTemplatesComponentsHopprGrid) {
+
+  var keys = Object.keys;
+
+  var get = _ember['default'].get;
+  var set = _ember['default'].set;
+  var getWithDefault = _ember['default'].getWithDefault;
+  var setProperties = _ember['default'].setProperties;
+  var getProperties = _ember['default'].getProperties;
+  var computed = _ember['default'].computed;
+  var observer = _ember['default'].observer;
+  var isNone = _ember['default'].isNone;
+  var A = _ember['default'].A;
+  var on = _ember['default'].on;
+  var defineProperty = _ember['default'].defineProperty;
+  var compare = _ember['default'].compare;
+  var typeOf = _ember['default'].typeOf;
+  var run = _ember['default'].run;
+  var Component = _ember['default'].Component;
+  var assert = _ember['default'].assert;
+  var S = _ember['default'].String;
+  var O = _ember['default'].Object;
+  var jQ = _ember['default'].$;
+  exports['default'] = Component.extend({
+    layout: _hopprUiTemplatesComponentsHopprGrid['default'],
+    data: A([]),
+    columns: A([]),
 
     init: function init() {
 
       this._super.apply(this, arguments);
-      var height = this.attrs.height;
-      var width = this.attrs.width;
+      var height = this.attrs;
+      var width = this.attrs;
+      var gridOptions = this.attrs;
+    },
+
+    didInsertElement: function didInsertElement() {
+
+      //console.log(gridOptions.getColumns());
+
     }
 
   });
@@ -658,9 +690,75 @@ define("hoppr-ui/locales/en/translations", ["exports"], function (exports) {
         }
     };
 });
-define('hoppr-ui/pod/components/dashboard/dailyrevenue/grid-container/component', ['exports', 'ember'], function (exports, _ember) {
+define('hoppr-ui/pod/components/dashboard/dailyrevenue/grid-container/component', ['exports', 'ember', 'hoppr-ui/types/grid'], function (exports, _ember, _hopprUiTypesGrid) {
     exports['default'] = _ember['default'].Component.extend({
         toggle: 'toggle',
+
+        gridOptions: null,
+
+        setupGridOptions: _ember['default'].on('init', function () {
+
+            var myGrid = _hopprUiTypesGrid['default'].create({
+
+                columns: [{
+                    name: "units",
+                    caption: "#",
+                    isHidden: false,
+                    isEditable: true,
+                    isDraggable: false
+                }, {
+                    name: "avg",
+                    caption: "Avg",
+                    isHidden: false,
+                    isEditable: true,
+                    isDraggable: false
+
+                }, {
+                    name: "revenue",
+                    caption: "Revenue",
+                    isHidden: false,
+                    isEditable: true,
+                    isDraggable: false
+
+                }]
+
+            });
+
+            /*
+                myGrid.setColumns([
+            
+                {
+                  name:"units",
+                  caption:"#",
+                  isHidden:false,
+                  isEditable:true,
+                  isDraggable:false
+                },
+            
+                {
+                  name:"avg",
+                  caption:"Avg",
+                  isHidden:false,
+                  isEditable:true,
+                  isDraggable:false
+            
+                },
+            
+                {
+                  name:"revenue",
+                  caption:"Revenue",
+                  isHidden:false,
+                  isEditable:true,
+                  isDraggable:false
+            
+                }	
+            
+                ]); 
+            */
+            this.set("gridOptions", myGrid);
+            console.log(this.get("gridOptions"));
+        }),
+
         actions: {
             toggle: function toggle(what) {
                 this.sendAction('toggle', what);
@@ -792,7 +890,7 @@ define("hoppr-ui/pod/components/dashboard/dailyrevenue/grid-container/template",
         morphs[2] = dom.createMorphAt(element0, 5, 5);
         return morphs;
       },
-      statements: [["element", "action", ["toggle", "grid"], ["on", "mouseUp"], ["loc", [null, [3, 8], [3, 47]]], 0, 0], ["inline", "hoppr-grid", [], ["height", "400px", "width", "500px"], ["loc", [null, [4, 0], [4, 43]]], 0, 0], ["block", "if", [["get", "collapsed", ["loc", [null, [6, 6], [6, 15]]], 0, 0, 0, 0]], [], 0, 1, ["loc", [null, [6, 0], [10, 7]]]]],
+      statements: [["element", "action", ["toggle", "grid"], ["on", "mouseUp"], ["loc", [null, [3, 8], [3, 47]]], 0, 0], ["inline", "hoppr-grid", [], ["height", "400px", "width", "500px", "options", ["subexpr", "@mut", [["get", "gridOptions", ["loc", [null, [4, 50], [4, 61]]], 0, 0, 0, 0]], [], [], 0, 0]], ["loc", [null, [4, 0], [4, 63]]], 0, 0], ["block", "if", [["get", "collapsed", ["loc", [null, [6, 6], [6, 15]]], 0, 0, 0, 0]], [], 0, 1, ["loc", [null, [6, 0], [10, 7]]]]],
       locals: [],
       templates: [child0, child1]
     };
@@ -5596,28 +5694,19 @@ define('hoppr-ui/types/chartoptions', ['exports', 'ember'], function (exports, _
 
   });
 });
-define('hoppr-ui/utils/grid', ['exports', 'ember'], function (exports, _ember) {
+define('hoppr-ui/types/grid', ['exports', 'ember'], function (exports, _ember) {
     exports['default'] = _ember['default'].Object.extend({
 
         init: function init() {
 
-            var columns = [];
-            var groupedHeaders = [];
+            var column = [];
 
             this.getColumns = function () {
-                return columns;
-            };
-
-            this.getGroupedHeaders = function () {
-                return groupedHeaders;
+                return column;
             };
 
             this.setColumns = function (val) {
-                columns.push(val);
-            };
-
-            this.setGroupedHeaders = function (val) {
-                groupedHeaders.push(val);
+                column.push(val);
             };
 
             this._super.apply(this, arguments);
@@ -5677,7 +5766,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("hoppr-ui/app")["default"].create({"name":"hoppr-ui","version":"0.0.1+44ec357b"});
+  require("hoppr-ui/app")["default"].create({"name":"hoppr-ui","version":"0.0.1+abb5185e"});
 }
 
 /* jshint ignore:end */
